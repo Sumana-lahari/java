@@ -1,0 +1,59 @@
+import java.util.Scanner;
+
+public class WeekFive {
+	int numberOfItems,capacity,weights[],profit[],table[][];
+	int maxProfit;
+	WeekFive(){
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Enter number of items and size of knapsack: ");
+		numberOfItems = scan.nextInt();
+		capacity = scan.nextInt();
+		weights=new int[numberOfItems];
+		profit = new int[numberOfItems];
+		table = new int[numberOfItems+1][capacity+1];
+		for(int i=0;i<numberOfItems;i++){
+			System.out.printf("Enter weight and profit of item - %d: ",i+1);
+			weights[i]=scan.nextInt();
+			profit[i]=scan.nextInt();
+		}
+	}
+
+	void intialize(){
+		for(int i=0;i<=numberOfItems;i++){
+			for(int j=0;j<=capacity;j++){
+				if(i==0 || j==0) continue;
+				else if(weights[i-1] <= j){
+					table[i][j] = Math.max(table[i-1][j],table[i-1][j - weights[i-1]]+profit[i-1]);
+				}
+				else {
+					table[i][j]=table[i-1][j];
+				}
+			}
+		}
+	}
+
+	void printKnapsack(){
+		maxProfit = table[numberOfItems][capacity];
+		System.out.println("Maximum profit of the knapsack is: "+maxProfit);
+		if(maxProfit>0){
+			System.out.print("Items having weights ");
+			for(int i=numberOfItems;i>0 && maxProfit>0;i--){
+				if(maxProfit != table[i-1][capacity]){
+					System.out.print(weights[i-1] + " ");
+					maxProfit -= profit[i-1];
+					capacity-=weights[i-1];
+				}
+			}
+			System.out.print("are included");
+		}
+		else {
+			System.out.println("No items are included");
+		}
+	}
+
+	public static void main(String[] args) {
+		WeekFive obj= new WeekFive();
+		obj.intialize();
+		obj.printKnapsack();
+	}
+}

@@ -1,0 +1,77 @@
+import java.util.Scanner;
+import java.util.Arrays;
+
+public class WeekFour{
+	int[] adjacencyMatrix[],cost,parente;
+	int source,numberOfVertices,numberOfEdges;
+	boolean[] visited;
+	WeekFour(){
+		Scanner scan=new Scanner(System.in);
+		System.out.print("Enter number of vertices, edges: ");
+		numberOfVertices=scan.nextInt();
+		numberOfEdges=scan.nextInt();
+		adjacencyMatrix=new int[numberOfVertices][numberOfVertices];
+		cost=new int[numberOfVertices];
+		parente=new int[numberOfVertices];
+		visited=new boolean[numberOfVertices];
+		int weight,destination;
+		for(int i=0;i<numberOfEdges;i++){
+			System.out.printf("Enter source,destination, weight of Edge - %d : ",i+1);
+			source=scan.nextInt();
+			destination=scan.nextInt();
+			weight=scan.nextInt();
+			adjacencyMatrix[source][destination]=weight;
+			adjacencyMatrix[destination][source]=weight;
+		}
+		System.out.print("Enter the source vertex: ");
+		source=scan.nextInt();
+	}
+
+	String getPath(String str, int vertex, int[] parent){
+		if(parent[vertex]==vertex) return vertex+"->"+str;
+		else return getPath(vertex+"->"+str,parent[vertex],parent);
+	}
+
+	int minKey(){
+		int minIndex=-1,minDistance=Integer.MAX_VALUE;
+		for(int i=0;i<numberOfVertices;i++){
+			if(cost[i]<minDistance && !visited[i]){
+				minIndex=i;
+				minDistance=cost[i];
+			}
+		}
+		return minIndex;
+	}
+
+	void dijkstra(){
+		for(int i=0;i<parente.length;i++) parente[i]=i;
+		Arrays.fill(cost,Integer.MAX_VALUE);
+		cost[source]=0;
+		int count=0,min;
+		while(count!=numberOfVertices){
+			min=minKey();
+			visited[min]=true;
+			for(int i=0;i<numberOfVertices;i++){
+				int temp=cost[min]+adjacencyMatrix[min][i];
+				if(!visited[i] && temp<cost[i] && adjacencyMatrix[min][i]!=0){
+					parente[i]=min;
+					cost[i]=temp;
+				
+			}
+			count++;
+		}
+	}
+	public static void main(String[] args){
+		WeekFour obj=new WeekFour();
+		obj.dijkstra();
+		System.out.println("Source  Destination  Weight  Path");
+		for(int i=0;i<obj.numberOfVertices;i++) {
+			if (i == obj.source) System.out.printf("%5d  %8d  %8s    %-10s\n", obj.source, obj.source, "-", "-");
+			else {
+				String str = obj.getPath("", i, obj.parente);
+				str = str.substring(0, str.lastIndexOf("->"));
+				System.out.printf("%5d  %8d  %8d    %-10s\n", obj.source, i, obj.cost[i], str);
+			}
+		}
+	}
+}
